@@ -17,6 +17,7 @@ public class BallsSimulator implements Simulable {
     public BallsSimulator(GUISimulator gui) {
         this.balls = new Balls();
         this.gui = gui;
+        this.balls.setWindowSize(gui.getWidth(), gui.getHeight());
         balls.addBall(100,110);
         System.out.println(balls);
 
