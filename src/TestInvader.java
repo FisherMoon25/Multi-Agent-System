@@ -126,7 +126,6 @@ class Invader implements Simulable {
         gui.addGraphicalElement(new Rectangle(x + 30, y     , invaderColor, invaderColor, 10));
         gui.addGraphicalElement(new Rectangle(x + 40, y     , invaderColor, invaderColor, 10));
         gui.addGraphicalElement(new Rectangle(x + 50, y     , invaderColor, invaderColor, 10));
-
         gui.addGraphicalElement(new Rectangle(x + 20, y + 10, invaderColor, invaderColor, 10));
         gui.addGraphicalElement(new Rectangle(x + 30, y + 10, invaderColor, invaderColor, 10));
         gui.addGraphicalElement(new Rectangle(x + 40, y + 10, invaderColor, invaderColor, 10));
