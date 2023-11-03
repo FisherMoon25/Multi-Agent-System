@@ -34,9 +34,9 @@ public class Balls {
 
 
     public void translate(int dx, int dy) {
-        for (int i = 0; i < balls.size(); i++) {
-            Point ball = balls.get(i);
-            Point direction = directions.get(i);
+        for (int i = 0; i < this.balls.size(); i++) {
+            Point ball = this.balls.get(i);
+            Point direction = this.directions.get(i);
             int newX = ball.x + dx * direction.x;
             int newY = ball.y + dy * direction.y;
 
@@ -72,10 +72,13 @@ public class Balls {
     public void reInit() {
         for (int i = 0; i < balls.size(); i++) {
             balls.get(i).setLocation(initial_positions.get(i));
+            directions.get(i).setLocation(new Point(1,1));
+
         }
+
     }
     public List<Point> getBalls() {
-        return new ArrayList<>(balls);
+        return this.balls;
     }
 
     public String toString(){

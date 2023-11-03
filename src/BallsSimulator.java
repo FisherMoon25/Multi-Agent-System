@@ -10,7 +10,6 @@ public class BallsSimulator implements Simulable {
     public BallsSimulator(){
 
         this.balls = new Balls();
-        balls.addBall(100,110);
         System.out.println(balls);
 
     }
@@ -18,7 +17,6 @@ public class BallsSimulator implements Simulable {
         this.balls = new Balls();
         this.gui = gui;
         this.balls.setWindowSize(gui.getWidth(), gui.getHeight());
-        balls.addBall(100,110);
         System.out.println(balls);
 
     }
@@ -29,7 +27,7 @@ public class BallsSimulator implements Simulable {
 
     @Override
     public void next(){
-        balls.translate(10,10);
+        balls.translate(30,30);
         System.out.println("my balls were hot");
         System.out.println(this.balls.toString());
         drawBalls();
