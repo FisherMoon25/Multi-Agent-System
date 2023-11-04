@@ -18,8 +18,8 @@ public class GameOfLife extends AbstractGameOfLife {
         for (int i=-1;i<=1;i++){
             for (int j=-1;j<=1;j++){
                 if (i!=0 || j!=0){
-                    int newRow = (row+i+rows)%this.rows;
-                    int newColumn=(column+j+columns)%this.columns;
+                    int newRow = (row+i+this.rows)%this.rows;
+                    int newColumn=(column+j+this.columns)%this.columns;
                     if(grid[newRow][newColumn].isAlive()){
                         count+=1;
                     }

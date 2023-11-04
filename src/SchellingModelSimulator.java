@@ -4,17 +4,15 @@ import gui.Simulable;
 
 import java.awt.*;
 
-public class GameImmigrationSimulator implements Simulable {
-    private GameImmigration game;
+public class SchellingModelSimulator implements Simulable {
+    private SchelingModel game;
     private GUISimulator gui;
     private int cellSize = 10;
-
-    public  GameImmigrationSimulator(GUISimulator gui,int rows,int columns,int nbOfStates){
-        this.game = new GameImmigration(rows,columns,nbOfStates);
+    
+    public SchellingModelSimulator(GUISimulator gui,int rows,int columns,int nbOfColors,int K) {
+        this.game = new SchelingModel (rows, columns, nbOfColors, K);
         this.gui = gui;
     }
-
-
     @Override
     public void next(){
         game.update();
@@ -25,7 +23,6 @@ public class GameImmigrationSimulator implements Simulable {
         game.reInit();
         drawGame();
     }
-
     private Color stateToColor(int state, int numberOfStates) {
 
         float h =  (float) state / numberOfStates;
@@ -36,16 +33,13 @@ public class GameImmigrationSimulator implements Simulable {
         Cell[][] grid = game.getGrid();
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
-                Color color = stateToColor(grid[i][j].getState(), game.getNbOfStates());
+                Color color = stateToColor(grid[i][j].getState(), game.getNbOfColors());
                 gui.addGraphicalElement(new Rectangle(j * cellSize, i * cellSize, color, color, cellSize));
 
             }
         }
     }
-
-
-
-    public GameImmigration getGame(){
+    public SchelingModel getGame(){
         return this.game;
     }
 
