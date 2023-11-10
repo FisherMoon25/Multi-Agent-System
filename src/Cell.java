@@ -14,6 +14,6 @@ public class Cell {
           this.state = state;
         }
         public boolean isAlive(){
-            return this.state!=0;
+            return this.state==1;
         }
 }

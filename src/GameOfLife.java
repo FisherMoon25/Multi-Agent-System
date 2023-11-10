@@ -9,7 +9,6 @@ public class GameOfLife extends AbstractGameOfLife {
 
     public GameOfLife(int rows,int columns){
         super(rows,columns);
-
     }
 
 
@@ -57,9 +56,5 @@ public class GameOfLife extends AbstractGameOfLife {
         }
         grid = newGrid;
     }
-
-
-
-
 }
 
