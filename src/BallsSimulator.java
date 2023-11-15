@@ -7,14 +7,20 @@ import java.awt.*;
 public class BallsSimulator implements Simulable {
     private Balls balls;
     private GUISimulator gui;
+
+    private EventManager eventManager;
     public BallsSimulator(){
 
         this.balls = new Balls();
-        System.out.println(balls);
+        this.eventManager = new EventManager();
+        this.eventManager.addEvent(new BallsEvent(1,balls,eventManager));
 
     }
     public BallsSimulator(GUISimulator gui) {
         this.balls = new Balls();
+        this.eventManager = new EventManager();
+        this.eventManager.addEvent(new BallsEvent(1,balls,eventManager));
+
         this.gui = gui;
         this.balls.setWindowSize(gui.getWidth(), gui.getHeight());
         System.out.println(balls);
@@ -27,15 +33,14 @@ public class BallsSimulator implements Simulable {
 
     @Override
     public void next(){
-        balls.translate(30,30);
-        System.out.println("my balls were hot");
-        System.out.println(this.balls.toString());
+        this.eventManager.next();
         drawBalls();
     }
     @Override
     public void restart(){
         balls.reInit();
-        System.out.println(this.balls.toString());
+        this.eventManager.restart();
+        this.eventManager.addEvent(new BallsEvent(1, balls,eventManager));
         drawBalls();
     }
 
