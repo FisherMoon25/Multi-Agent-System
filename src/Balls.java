@@ -5,35 +5,22 @@ import java.util.List;
 import java.lang.StringBuilder;
 public class Balls {
     private ArrayList<Point> balls;
-    private ArrayList<Point> initial_positions;
 
-    private ArrayList<Point> directions= new ArrayList<>();
+    private ArrayList<Point> initialPositions;
 
-    private int windowWidth = 500; // Valeurs par défaut
-    private int windowHeight = 500;
+    private ArrayList<Point> directions = new ArrayList<>();
+
+
 
     // Constructeur sans arguments
     public Balls() {
         this.balls = new ArrayList<>();
-        this.initial_positions = new ArrayList<>();
+        this.initialPositions = new ArrayList<>();
 
     }
 
-    // Constructeur avec la taille de la fenêtre
-    public Balls(int windowWidth, int windowHeight) {
-        this();
-        this.windowWidth = windowWidth;
-        this.windowHeight = windowHeight;
 
-    }
-    public void setWindowSize(int windowWidth, int windowHeight) {
-        this.windowWidth = windowWidth;
-        this.windowHeight = windowHeight;
-    }
-
-
-
-    public void translate(int dx, int dy) {
+    public void translate(int dx, int dy, int windowWidth, int windowHeight) {
         for (int i = 0; i < this.balls.size(); i++) {
             Point ball = this.balls.get(i);
             Point direction = this.directions.get(i);
@@ -62,25 +49,24 @@ public class Balls {
         }
     }
 
-
-    void addBall(int x,int y){
-        balls.add(new Point(x,y));
-        initial_positions.add(new Point(x,y));
+    void addBall(int x,int y) {
+        balls.add(new Point(x, y));
+        initialPositions.add(new Point(x, y));
         directions.add(new Point(1, 1)); // Initial direction: vers le bas et à droite
 
     }
     public void reInit() {
         for (int i = 0; i < balls.size(); i++) {
-            balls.get(i).setLocation(initial_positions.get(i));
+            balls.get(i).setLocation(initialPositions.get(i));
             directions.get(i).setLocation(new Point(1,1));
 
         }
-
     }
     public List<Point> getBalls() {
         return this.balls;
     }
 
+    @Override
     public String toString(){
         StringBuilder st = new StringBuilder();
         for (Point ball:balls){
