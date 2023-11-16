@@ -19,21 +19,27 @@ public class Predator extends Boid {
                 double d =Math.sqrt(distX*distX+distY*distY);
                 if (d>0&&d<distSeparation){
 
-                    c.setLocation(c.x - (this.getPosition()[i].x - preys.getPosition()[j].x), c.y - (this.getPosition()[i].y - preys.getPosition()[j].y));
+                    c.setLocation(c.x - distX, c.y - distY);
 
-
+                    count++;
                 }
 
             }
 
-            if (count > 0) {
-
-                double n = Math.sqrt(Math.pow(c.getX(), 2) + Math.pow(c.getY(), 2));
-                c.setLocation(c.getX() / n, c.getY() / n);
+            if (count>0){
+                c.setLocation(c.x/count,c.y/count);
+                float normC=(float )Math.sqrt(c.x*c.x + c.y*c.y);
+                c.setLocation(c.x*vlimY/normC,c.y*vlimY/normC);
                 Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
+                float m = (float) Math.sqrt(acceleration.x*acceleration.x + acceleration.y*acceleration.y);
+                if(m > 3){
+                    acceleration.x = (int) (acceleration.x*3/m);
+                    acceleration.y = (int) (acceleration.y*3/m);
+                }
+
+
                 this.acceleration[i].x += acceleration.x;
                 this.acceleration[i].y += acceleration.y;
-
             }
         }
     }
@@ -46,8 +52,8 @@ public class Predator extends Boid {
         for(int i=0;i<numBoids;i++){
             this.getVelocity()[i].x +=this.acceleration[i].x;
             this.getVelocity()[i].y +=this.acceleration[i].y;
-            this.getPosition()[i].x+=this.getPosition()[i].x;
-            this.getPosition()[i].y+=this.getPosition()[i].y;
+            this.getPosition()[i].x+=this.getVelocity()[i].x;
+            this.getPosition()[i].y+=this.getVelocity()[i].y;
             this.acceleration[i].setLocation(0,0);
             this.boundedPosition(getPosition()[i],getVelocity()[i],width,height);
         }

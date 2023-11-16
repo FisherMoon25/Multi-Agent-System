@@ -15,7 +15,7 @@ public class BoidSimulation implements Simulable {
 
 
     public BoidSimulation(Point2D.Float[] position,Point2D.Float[] velocity, GUISimulator gui, int diameter, int n) {
-        this.flocks = new Boid(position,velocity,10,10,120,1);
+        this.flocks = new Boid(position,velocity,5,2,120,1);
         this.gui = gui;
         this.diameter = diameter;
 

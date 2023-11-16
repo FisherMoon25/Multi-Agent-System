@@ -37,8 +37,8 @@ public class Boid {
             this.acceleration[i]=new Point2D.Float(0,0);
         }
         this.fieldOfView = fieldOfView;
-        this.distSeparation = 20;
-        this.distNeighbor = 40;
+        this.distSeparation = 10;
+        this.distNeighbor = 20;
         this.id = 0;
         this.diameter = 10;
         this.vlimX =vlimX ;
@@ -113,7 +113,7 @@ public class Boid {
 
                     c.setLocation(c.getX() + this.getPosition()[j].getX(), c.getY() +this.getPosition()[j].getY());
 
-                    count += 1;
+                   count++;
 
                 }
 
@@ -122,15 +122,17 @@ public class Boid {
             if (count != 0) {
                 c.setLocation(c.getX() / count, c.getY() / count);
 
-                c.setLocation((c.getX() - this.getPosition()[i].getX()) / 100, (c.getY() - this.getPosition()[i].y) / 100);
+                //c.setLocation((c.getX() - this.getPosition()[i].getX()), (c.getY() - this.getPosition()[i].y));
 
                 float normC=(float )Math.sqrt(c.x*c.x + c.y*c.y);
-                if (normC>vlimY){
-                    c.x = c.x*vlimY/normC;
-                    c.y=c.y*vlimY/normC;
+                c.setLocation(c.getX()*vlimY / normC, c.getY()*vlimY / normC);
+                Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
+                float m = (float) Math.sqrt(acceleration.x*acceleration.x + acceleration.y*acceleration.y);
+                if(m > 3){
+                    acceleration.x = (int) (acceleration.x*3/m);
+                    acceleration.y = (int) (acceleration.y*3/m);
                 }
 
-                Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
                 this.acceleration[i].x += acceleration.x;
                 this.acceleration[i].y += acceleration.y;
             }
@@ -145,30 +147,38 @@ public class Boid {
         int numBoids = this.getPosition().length;
         for (int i = 0 ;i<numBoids;i++){
             Point2D.Float c = new Point2D.Float(0, 0);
-
+            int count =0;
             for (int j = 0 ;j<numBoids;j++) {
-
-
-                if (this.isNeighbor(j,i)) {
-
-                    c.setLocation(c.getX() - this.getPosition()[j].getX(), c.getY() -this.getPosition()[j].getY());
-
-
+                float distX=this.getPosition()[j].x-this.getPosition()[i].x;
+                float distY = this.getPosition()[j].y-this.getPosition()[i].y;
+                float distance=(float)Math.sqrt(distX*distX+distY*distY);
+                if (distance>0 && distance<distSeparation) {
+                    c.setLocation(c.getX() - distX, c.getY() -distY);
+                    float normC=(float)Math.sqrt(c.x*c.x+c.y*c.y);
+                    c.setLocation(c.x/(normC*distance),c.y/(normC*distance));
+                    count++;
                 }
 
             }
 
 
-            c.setLocation((c.getX() - this.getPosition()[i].getX()) / 100, (c.getY() - this.getPosition()[i].y) / 100);
-            float normC=(float )Math.sqrt(c.x*c.x + c.y*c.y);
-            if (normC>vlimY){
-                c.x = c.x*vlimY/normC;
-                c.y=c.y*vlimY/normC;
-            }
+            //c.setLocation((c.getX() - this.getPosition()[i].getX())/100, (c.getY() - this.getPosition()[i].y)/100);
 
-            Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
-            this.acceleration[i].x += acceleration.x;
-            this.acceleration[i].y += acceleration.y;
+            if (count>0){
+                c.setLocation(c.x/count,c.y/count);
+                float normC=(float )Math.sqrt(c.x*c.x + c.y*c.y);
+                c.setLocation(c.x*vlimY/normC,c.y*vlimY/normC);
+                Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
+                float m = (float) Math.sqrt(acceleration.x*acceleration.x + acceleration.y*acceleration.y);
+                if(m > 3){
+                    acceleration.x = (int) (acceleration.x*3/m);
+                    acceleration.y = (int) (acceleration.y*3/m);
+                }
+
+
+                this.acceleration[i].x += acceleration.x;
+                this.acceleration[i].y += acceleration.y;
+            }
 
         }
     }
@@ -186,8 +196,7 @@ public class Boid {
                 if (this.isNeighbor(j,i)) {
 
                     c.setLocation(c.getX() + this.getVelocity()[j].getX(), c.getY() +this.getVelocity()[j].getY());
-
-                    count += 1;
+                    count++;
 
                 }
 
@@ -195,14 +204,17 @@ public class Boid {
 
             if (count != 0) {
                 c.setLocation(c.getX() / count, c.getY() / count);
-                c.setLocation((c.getX() - this.getVelocity()[i].getX()) / 8, (c.getY() - this.getVelocity()[i].getY()) / 8);
+                //c.setLocation((c.getX() - this.getVelocity()[i].getX()) / 8, (c.getY() - this.getVelocity()[i].getY()) / 8);
                 float normC=(float )Math.sqrt(c.x*c.x + c.y*c.y);
-                if (normC>vlimY){
-                    c.x = c.x*vlimY/normC;
-                    c.y=c.y*vlimY/normC;
+                c.setLocation(c.getX()*vlimY / normC, c.getY()*vlimY / normC);
+                Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
+                float m = (float) Math.sqrt(acceleration.x*acceleration.x + acceleration.y*acceleration.y);
+                if(m > 3){
+                    acceleration.x = (int) (acceleration.x*3/m);
+                    acceleration.y = (int) (acceleration.y*3/m);
                 }
 
-                Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
+
                 this.acceleration[i].x += acceleration.x;
                 this.acceleration[i].y += acceleration.y;
             }
@@ -221,10 +233,14 @@ public class Boid {
         for(int i=0;i<numBoids;i++){
             this.getVelocity()[i].x +=this.acceleration[i].x;
             this.getVelocity()[i].y +=this.acceleration[i].y;
-            this.getPosition()[i].x+=this.getPosition()[i].x;
-            this.getPosition()[i].y+=this.getPosition()[i].y;
+            this.getPosition()[i].x+=this.getVelocity()[i].x;
+            this.getPosition()[i].y+=this.getVelocity()[i].y;
+            System.out.println(this.acceleration[i].x);
+            System.out.println(this.acceleration[i].y);
+            System.out.println(this.getPosition()[i].x);
+            System.out.println(this.getPosition()[i].y);
             this.acceleration[i].setLocation(0,0);
-            //this.boundedPosition(getPosition()[i],getVelocity()[i],width,height);
+            this.boundedPosition(getPosition()[i],getVelocity()[i],width,height);
         }
 
     }

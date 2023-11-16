@@ -9,19 +9,19 @@ public class TestPreyPredatorSimulator {
         GUISimulator gui = new GUISimulator (500 , 500 , Color.BLACK ) ;
         Random random=new Random();
         int numPreys= 20;
-        int numPredators = 5;
+        int numPredators = 1;
         Point2D.Float[] positionPreys=new Point2D.Float[numPreys];
         Point2D.Float[] velocityPreys=new Point2D.Float[numPreys];
         Point2D.Float[] positionPredators=new Point2D.Float[numPredators];
         Point2D.Float[] velocityPredators=new Point2D.Float[numPredators];
 
         for(int i=0;i<numPreys;i++){
-            positionPreys[i] = new Point2D.Float(random.nextInt(500), random.nextInt(500));
+            positionPreys[i] = new Point2D.Float(random.nextInt(300,500), random.nextInt(300,500));
             velocityPreys[i] = new Point2D.Float(random.nextInt(15), random.nextInt(10));
         }
 
         for(int i=0;i<numPredators;i++){
-            positionPredators[i] = new Point2D.Float(random.nextInt(500), random.nextInt(500));
+            positionPredators[i] = new Point2D.Float(random.nextInt(0,300), random.nextInt(0,500));
             velocityPredators[i] = new Point2D.Float(random.nextInt(15), random.nextInt(10));
         }
         Prey preys = new Prey(positionPreys,velocityPreys,15,10,120,1);
