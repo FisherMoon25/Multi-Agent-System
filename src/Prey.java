@@ -14,8 +14,8 @@ public class Prey extends Boid {
      * @param fieldOfView The field of view angle for each prey boid.
      * @param step        The simulation step size.
      */
-    public Prey(Point2D.Float[] position, Point2D.Float[] velocity, float vlim, float maxForce, float fieldOfView,long step){
-        super( position, velocity,vlim,maxForce, fieldOfView,step,7);
+    public Prey(Point2D.Float[] position, Point2D.Float[] velocity,float vlim,float maxForce, float fieldOfView,long step,int diameter,float cohesionCoeff,float alignmentCoeff,float seperationCoeff){
+        super( position, velocity,vlim,maxForce, fieldOfView,step,diameter,cohesionCoeff,alignmentCoeff,seperationCoeff);
     }
 
     /**
@@ -47,14 +47,35 @@ public class Prey extends Boid {
                     c.setLocation(c.x / normC, c.y / normC); // Normalize the result
                 }
 
-                Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
-                //limitForce(acceleration);
+                //Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
+                limitForce(c);
 
-                this.acceleration[i].x += acceleration.x;
-                this.acceleration[i].y += acceleration.y;
+                this.acceleration[i].x += c.x;
+                this.acceleration[i].y += c.y;
             }
 
     }
+    public void removePrey(int index) {
+        if (index < 0 || index >= this.position.length) {
+            return; // Index out of bounds, do nothing
+        }
+
+        Point2D.Float[] newPosition = new Point2D.Float[this.position.length - 1];
+        Point2D.Float[] newVelocity = new Point2D.Float[this.position.length - 1];
+        // You might need to do the same for other properties like acceleration, etc.
+
+        for (int i = 0, j = 0; i < this.position.length; i++) {
+            if (i != index) {
+                newPosition[j] = this.position[i];
+                newVelocity[j] = this.velocity[i];
+                j++;
+            }
+        }
+
+        this.position = newPosition;
+        this.velocity = newVelocity;
+    }
+
 
     /**
      * Updates the state of each prey boid in the simulation by applying the behavior forces,

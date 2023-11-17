@@ -1,6 +1,8 @@
 import gui.GUISimulator;
 import gui.Oval;
 import gui.Simulable;
+import gui.Triangle;
+
 import java.awt.*;
 import java.awt.geom.Point2D;
 
@@ -28,13 +30,12 @@ public class BoidSimulation implements Simulable {
      * @param gui      The GUISimulator for visualization.
      * @param diameter Diameter of each boid for visualization.
      */
-    public BoidSimulation(Point2D.Float[] position,Point2D.Float[] velocity,float vlim,float maxForce,float fieldOfView,int step, GUISimulator gui, int diameter) {
-        this.boids = new Boid(position,velocity,vlim,maxForce,fieldOfView,step,diameter);
+    public BoidSimulation(Point2D.Float[] position,Point2D.Float[] velocity,float vlim,float maxForce,float fieldOfView,int step, GUISimulator gui, int diameter,float cohesionCoeff,float alignmentCoeff,float seperationCoeff) {
+        this.boids = new Boid(position,velocity,vlim,maxForce,fieldOfView,step,diameter,cohesionCoeff,alignmentCoeff,seperationCoeff);
         this.gui = gui;
         this.diameter = diameter;
         this.eventManager = new EventManager();
-
-
+        this.draw();
     }
 
     /**
@@ -69,7 +70,9 @@ public class BoidSimulation implements Simulable {
         for (int i = 0;i<numPreys;i++){
             int x =(int)this.boids.getPosition()[i].x;
             int y =(int)this.boids.getPosition()[i].y;
-            gui.addGraphicalElement(new Oval(x,y, Color.BLUE,Color.BLUE,this.boids.getDiam()));
+            Triangle triangle=new Triangle(x,y,Color.GREEN,Color.BLUE,6,8,this.boids.getVelocity()[i]);
+
+            gui.addGraphicalElement(triangle);
         }
     }
 

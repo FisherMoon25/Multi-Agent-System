@@ -20,6 +20,12 @@ public class Boid {
     protected float maxForce;
 
     protected long step;
+    private int initLength;
+
+    private float cohesionCoeff;
+
+    private float alignmentCoeff;
+    private float seperationCoeff;
 
     /**
      * Constructs a Boid with specified parameters.
@@ -31,27 +37,30 @@ public class Boid {
      * @param fieldOfView Field of view of the boid, determining its visible area.
      * @param step        Simulation step size.
      */
-    public Boid(Point2D.Float[] position, Point2D.Float[] velocity,float vlim,float maxForce, float fieldOfView,long step,int diameter) {
+    public Boid(Point2D.Float[] position, Point2D.Float[] velocity,float vlim,float maxForce, float fieldOfView,long step,int diameter,float cohesionCoeff,float alignmentCoeff,float seperationCoeff) {
 
         this.position = position;
         this.velocity = velocity;
-        int length =position.length;
-        this.init_position=new Point2D.Float[length];
-        this.init_velocity=new Point2D.Float[length];
-        this.acceleration = new Point2D.Float[length];
-        for (int i =0;i<length;i++){
+        this.initLength =position.length;
+        this.init_position=new Point2D.Float[initLength];
+        this.init_velocity=new Point2D.Float[initLength];
+        this.acceleration = new Point2D.Float[initLength];
+        for (int i =0;i<initLength;i++){
             this.init_position[i] = new Point2D.Float(position[i].x,position[i].y);
             this.init_velocity[i] = new Point2D.Float(velocity[i].x,velocity[i].y);
             this.acceleration[i]=new Point2D.Float(0,0);
         }
         this.fieldOfView = fieldOfView;
-        this.distSeparation =60;
+        this.distSeparation =20;
         this.distNeighbor = 40;
         this.diameter = diameter;
         this.vlim=vlim;
         this.maxForce=maxForce;
         this.step= step;
-        System.out.println(this.diameter);
+        this.cohesionCoeff = cohesionCoeff;
+        this.alignmentCoeff = alignmentCoeff;
+        this.seperationCoeff = seperationCoeff;
+
 
 
     }
@@ -139,8 +148,8 @@ public class Boid {
                 Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
                 limitForce(acceleration);
 
-                this.acceleration[i].x += acceleration.x;
-                this.acceleration[i].y += acceleration.y;
+                this.acceleration[i].x += cohesionCoeff*acceleration.x;
+                this.acceleration[i].y += cohesionCoeff*acceleration.y;
             }
 
     }
@@ -182,8 +191,8 @@ public class Boid {
                 Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
                 limitForce(acceleration);
 
-                this.acceleration[i].x += acceleration.x;
-                this.acceleration[i].y += acceleration.y;
+                this.acceleration[i].x += seperationCoeff*acceleration.x;
+                this.acceleration[i].y += seperationCoeff*acceleration.y;
             }
 
 
@@ -218,8 +227,8 @@ public class Boid {
                 c.setLocation(c.getX()*vlim / normC, c.getY()*vlim / normC);
                 Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
                 limitForce(acceleration);
-                this.acceleration[i].x += acceleration.x;
-                this.acceleration[i].y += acceleration.y;
+                this.acceleration[i].x += alignmentCoeff*acceleration.x;
+                this.acceleration[i].y += alignmentCoeff*acceleration.y;
             }
 
 
@@ -260,11 +269,15 @@ public class Boid {
      * to reset the simulation.
      */
     public void reInit(){
-        for (int i =0;i <this.position.length;i++){
-            this.position[i].setLocation(this.init_position[i]);
-            this.velocity[i].setLocation(this.init_velocity[i]);
-        }
 
+        Point2D.Float[] newPosition = new Point2D.Float[this.initLength];
+        Point2D.Float[] newVelocity = new Point2D.Float[this.initLength];
+        for (int i =0;i <this.initLength;i++){
+            newPosition[i]=new Point2D.Float(this.init_position[i].x,this.init_position[i].y);
+            newVelocity[i]=new Point2D.Float(this.init_velocity[i].x,this.init_velocity[i].y);
+        }
+        this.position = newPosition;
+        this.velocity = newVelocity;
     }
     /**
      * Limits the velocity of a boid to the maximum velocity.

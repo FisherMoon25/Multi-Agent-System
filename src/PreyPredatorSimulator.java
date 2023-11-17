@@ -1,6 +1,7 @@
 import gui.GUISimulator;
 import gui.Oval;
 import gui.Simulable;
+import gui.Triangle;
 
 import java.awt.*;
 
@@ -67,7 +68,10 @@ public class PreyPredatorSimulator implements Simulable {
         for (int i = 0; i < numPreys; i++) {
             int x = (int) this.preys.getPosition()[i].x;
             int y = (int) this.preys.getPosition()[i].y;
-            gui.addGraphicalElement(new Oval(x, y, Color.BLUE, Color.BLUE, this.preys.getDiam()));
+
+            Triangle triangle=new Triangle(x,y,Color.GREEN,Color.BLUE,6,8,this.preys.getVelocity()[i]);
+
+            gui.addGraphicalElement(triangle);
         }
 
         // Draw predators
@@ -75,7 +79,10 @@ public class PreyPredatorSimulator implements Simulable {
         for (int j = 0; j < numPredators; j++) {
             int x = (int) this.predators.getPosition()[j].x;
             int y = (int) this.predators.getPosition()[j].y;
-            gui.addGraphicalElement(new Oval(x, y, Color.GRAY, Color.GRAY, this.predators.getDiam()));
+
+            Triangle triangle=new Triangle(x,y,Color.RED,Color.WHITE,10,15,this.predators.getVelocity()[j]);
+            gui.addGraphicalElement(triangle);
+
         }
     }
 }

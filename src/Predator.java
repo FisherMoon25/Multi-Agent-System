@@ -15,8 +15,8 @@ public class Predator extends Boid {
      * @param fieldOfView The field of view angle for each predator boid.
      * @param step        The simulation step size.
      */
-    public Predator(Point2D.Float[] position, Point2D.Float[] velocity, float vlim, float maxForce, float fieldOfView,long step) {
-        super(position, velocity, vlim, maxForce, fieldOfView,step,7);
+    public Predator(Point2D.Float[] position, Point2D.Float[] velocity,float vlim,float maxForce, float fieldOfView,long step,int diameter,float cohesionCoeff,float alignmentCoeff,float seperationCoeff){
+        super( position, velocity,vlim,maxForce, fieldOfView,step,diameter,cohesionCoeff,alignmentCoeff,seperationCoeff);
     }
 
     /**
@@ -46,15 +46,29 @@ public class Predator extends Boid {
                     c.setLocation(c.x / normC, c.y / normC); // Normalize the result
         }
 
-        Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
-        //limitForce(acceleration);
+        Point2D.Float acceleration = new Point2D.Float((c.x*7 - this.getVelocity()[i].x), (c.y*7- this.getVelocity()[i].y));
+        limitForce(acceleration);
 
         this.acceleration[i].x += acceleration.x;
         this.acceleration[i].y += acceleration.y;
 
 
     }
+    private void checkAndRemoveCaughtPrey(int predatorIndex, Prey preys) {
+        float catchingDistance = 5.0f; // Define a small distance for catching
+        Point2D.Float predatorPosition = this.getPosition()[predatorIndex];
 
+        for (int j = 0; j < preys.getPosition().length; j++) {
+            Point2D.Float preyPosition = preys.getPosition()[j];
+            float distance = (float) predatorPosition.distance(preyPosition);
+
+            if (distance <= catchingDistance) {
+                // Remove the caught prey from the simulation
+                preys.removePrey(j);
+                break; // Assuming one catch per update cycle
+            }
+        }
+    }
     /**
      * Updates the state of each predator boid in the simulation by applying the behavior forces,
      * updating the velocity and position, and ensuring the predators chase prey.
@@ -79,6 +93,7 @@ public class Predator extends Boid {
             this.getPosition()[i].y+=this.getVelocity()[i].y;
             this.acceleration[i].setLocation(0,0);
             this.boundedPosition(getPosition()[i],getVelocity()[i],width,height);
+            checkAndRemoveCaughtPrey(i, preys);
         }
     }
     /**
