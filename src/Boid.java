@@ -1,48 +1,57 @@
-import java.awt.*;
+
 import java.awt.geom.Point2D;
-import java.io.PipedInputStream;
-import java.util.List;
+
 
 public class Boid {
 
-
     protected Point2D.Float[] position;
-
+    protected Point2D.Float[] init_position;
     protected Point2D.Float[] velocity;
+    protected Point2D.Float[] init_velocity;
     protected Point2D.Float[] acceleration;
 
-
     protected float fieldOfView;
-
     protected float distSeparation;
-
     protected float distNeighbor;
-
-    protected int id;
 
     protected int diameter;
 
-    protected float vlimX;
-    protected float vlimY;
+    protected float vlim;
+    protected float maxForce;
 
     protected long step;
 
+    /**
+     * Constructs a Boid with specified parameters.
+     *
+     * @param position    Initial position of the boid.
+     * @param velocity    Initial velocity of the boid.
+     * @param vlim     Maximum velocity limit .
+     * @param maxForce Maximum force limit
+     * @param fieldOfView Field of view of the boid, determining its visible area.
+     * @param step        Simulation step size.
+     */
+    public Boid(Point2D.Float[] position, Point2D.Float[] velocity,float vlim,float maxForce, float fieldOfView,long step,int diameter) {
 
-    public Boid(Point2D.Float[] position, Point2D.Float[] velocity,float vlimX,float vlimY, float fieldOfView,long step) {
-        this.step= step;
         this.position = position;
         this.velocity = velocity;
-        this.acceleration = new Point2D.Float[position.length];
-        for (int i =0;i<position.length;i++){
+        int length =position.length;
+        this.init_position=new Point2D.Float[length];
+        this.init_velocity=new Point2D.Float[length];
+        this.acceleration = new Point2D.Float[length];
+        for (int i =0;i<length;i++){
+            this.init_position[i] = new Point2D.Float(position[i].x,position[i].y);
+            this.init_velocity[i] = new Point2D.Float(velocity[i].x,velocity[i].y);
             this.acceleration[i]=new Point2D.Float(0,0);
         }
         this.fieldOfView = fieldOfView;
-        this.distSeparation = 10;
-        this.distNeighbor = 20;
-        this.id = 0;
-        this.diameter = 10;
-        this.vlimX =vlimX ;
-        this.vlimY = vlimY;
+        this.distSeparation =60;
+        this.distNeighbor = 40;
+        this.diameter = diameter;
+        this.vlim=vlim;
+        this.maxForce=maxForce;
+        this.step= step;
+        System.out.println(this.diameter);
 
 
     }
@@ -64,9 +73,7 @@ public class Boid {
         return this.fieldOfView;
     }
 
-    public int getId() {
-        return this.id;
-    }
+
 
     public int getDiam() {
         return this.diameter;
@@ -75,9 +82,7 @@ public class Boid {
         return this.step;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+
 
 
     public void setPosition(Point2D.Float[] position) {
@@ -99,10 +104,15 @@ public class Boid {
     public void setStep(){
         this.step = step;
     }
-    public void cohesion() {
 
-        int numBoids = this.getPosition().length;
-        for (int i = 0 ;i<numBoids;i++){
+    /**
+     * Performs cohesion behavior for a single boid, moving it towards the center of mass of its neighbors.
+     *
+     * @param i Index of the boid to perform cohesion on.
+     */
+    public void cohesion(int i) {
+
+            int numBoids = this.getPosition().length;
             Point2D.Float c = new Point2D.Float(0, 0);
 
             int count = 0;
@@ -113,7 +123,7 @@ public class Boid {
 
                     c.setLocation(c.getX() + this.getPosition()[j].getX(), c.getY() +this.getPosition()[j].getY());
 
-                   count++;
+                    count++;
 
                 }
 
@@ -122,30 +132,30 @@ public class Boid {
             if (count != 0) {
                 c.setLocation(c.getX() / count, c.getY() / count);
 
-                //c.setLocation((c.getX() - this.getPosition()[i].getX()), (c.getY() - this.getPosition()[i].y));
+                c.setLocation((c.getX() - this.getPosition()[i].getX()), (c.getY() - this.getPosition()[i].y));
 
-                float normC=(float )Math.sqrt(c.x*c.x + c.y*c.y);
-                c.setLocation(c.getX()*vlimY / normC, c.getY()*vlimY / normC);
+                float normC=(float)Math.sqrt(c.x*c.x + c.y*c.y);
+                c.setLocation(c.getX()*vlim / normC, c.getY()*vlim / normC);
                 Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
-                float m = (float) Math.sqrt(acceleration.x*acceleration.x + acceleration.y*acceleration.y);
-                if(m > 3){
-                    acceleration.x = (int) (acceleration.x*3/m);
-                    acceleration.y = (int) (acceleration.y*3/m);
-                }
+                limitForce(acceleration);
 
                 this.acceleration[i].x += acceleration.x;
                 this.acceleration[i].y += acceleration.y;
             }
-        }
+
     }
 
 
+    /**
+     * Performs separation behavior for a single boid, moving it away from its neighbors to avoid crowding.
+     *
+     * @param i Index of the boid to perform separation on.
+     */
+    public void separation(int i) {
 
-    public void separation() {
 
+            int numBoids = this.getPosition().length;
 
-        int numBoids = this.getPosition().length;
-        for (int i = 0 ;i<numBoids;i++){
             Point2D.Float c = new Point2D.Float(0, 0);
             int count =0;
             for (int j = 0 ;j<numBoids;j++) {
@@ -153,40 +163,40 @@ public class Boid {
                 float distY = this.getPosition()[j].y-this.getPosition()[i].y;
                 float distance=(float)Math.sqrt(distX*distX+distY*distY);
                 if (distance>0 && distance<distSeparation) {
-                    c.setLocation(c.getX() - distX, c.getY() -distY);
-                    float normC=(float)Math.sqrt(c.x*c.x+c.y*c.y);
-                    c.setLocation(c.x/(normC*distance),c.y/(normC*distance));
+                    Point2D.Float diff = new Point2D.Float(distX/(distance*distance),distY/(distance*distance));
+                    c.setLocation(c.getX() - diff.x, c.getY() - diff.y);
                     count++;
                 }
 
             }
 
 
-            //c.setLocation((c.getX() - this.getPosition()[i].getX())/100, (c.getY() - this.getPosition()[i].y)/100);
 
             if (count>0){
                 c.setLocation(c.x/count,c.y/count);
                 float normC=(float )Math.sqrt(c.x*c.x + c.y*c.y);
-                c.setLocation(c.x*vlimY/normC,c.y*vlimY/normC);
-                Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
-                float m = (float) Math.sqrt(acceleration.x*acceleration.x + acceleration.y*acceleration.y);
-                if(m > 3){
-                    acceleration.x = (int) (acceleration.x*3/m);
-                    acceleration.y = (int) (acceleration.y*3/m);
-                }
+                if (normC>0){
+                    c.setLocation(c.x*vlim/normC,c.y*vlim/normC);
 
+                }
+                Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
+                limitForce(acceleration);
 
                 this.acceleration[i].x += acceleration.x;
                 this.acceleration[i].y += acceleration.y;
             }
 
-        }
+
     }
 
-    public void alignement() {
+    /**
+     * Performs alignment behavior for a single boid, adjusting its velocity to match the average velocity of its neighbors.
+     *
+     * @param i Index of the boid to perform alignment on.
+     */
+    public void alignement(int i) {
 
-        int numBoids = this.getPosition().length;
-        for (int i = 0 ;i<numBoids;i++){
+            int numBoids = this.getPosition().length;
             Point2D.Float c = new Point2D.Float(0, 0);
 
             int count = 0;
@@ -204,46 +214,93 @@ public class Boid {
 
             if (count != 0) {
                 c.setLocation(c.getX() / count, c.getY() / count);
-                //c.setLocation((c.getX() - this.getVelocity()[i].getX()) / 8, (c.getY() - this.getVelocity()[i].getY()) / 8);
                 float normC=(float )Math.sqrt(c.x*c.x + c.y*c.y);
-                c.setLocation(c.getX()*vlimY / normC, c.getY()*vlimY / normC);
+                c.setLocation(c.getX()*vlim / normC, c.getY()*vlim / normC);
                 Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
-                float m = (float) Math.sqrt(acceleration.x*acceleration.x + acceleration.y*acceleration.y);
-                if(m > 3){
-                    acceleration.x = (int) (acceleration.x*3/m);
-                    acceleration.y = (int) (acceleration.y*3/m);
-                }
-
-
+                limitForce(acceleration);
                 this.acceleration[i].x += acceleration.x;
                 this.acceleration[i].y += acceleration.y;
             }
-        }
+
 
     }
-
+    /**
+     * Updates the state of the boid, applying cohesion, separation, and alignment behaviors.
+     *
+     * @param width  Width of the simulation area.
+     * @param height Height of the simulation area.
+     */
     public void update(int width, int height) {
 
 
-        this.cohesion();
-        this.separation();
-        this.alignement();
+
         int numBoids =this.getPosition().length;
 
         for(int i=0;i<numBoids;i++){
+            this.cohesion(i);
+            this.separation(i);
+            this.alignement(i);
+
             this.getVelocity()[i].x +=this.acceleration[i].x;
             this.getVelocity()[i].y +=this.acceleration[i].y;
+
+            limitVelocity(this.getVelocity()[i]);
+
             this.getPosition()[i].x+=this.getVelocity()[i].x;
             this.getPosition()[i].y+=this.getVelocity()[i].y;
-            System.out.println(this.acceleration[i].x);
-            System.out.println(this.acceleration[i].y);
-            System.out.println(this.getPosition()[i].x);
-            System.out.println(this.getPosition()[i].y);
+
             this.acceleration[i].setLocation(0,0);
             this.boundedPosition(getPosition()[i],getVelocity()[i],width,height);
         }
 
     }
+
+    /**
+     * Reinitializes the position and velocity of each boid to its initial state. This can be used
+     * to reset the simulation.
+     */
+    public void reInit(){
+        for (int i =0;i <this.position.length;i++){
+            this.position[i].setLocation(this.init_position[i]);
+            this.velocity[i].setLocation(this.init_velocity[i]);
+        }
+
+    }
+    /**
+     * Limits the velocity of a boid to the maximum velocity.
+     *
+     * @param vel The velocity vector of the boid to be limited.
+     */
+    public void limitVelocity(Point2D.Float vel) {
+        float speed = (float) Math.sqrt(vel.x * vel.x + vel.y * vel.y);
+        if (speed >vlim) {
+            vel.x = (vel.x / speed) * vlim;
+            vel.y = (vel.y / speed) * vlim;
+        }
+    }
+
+    /**
+     * Limits the force applied to a boid to the maximum force.
+     *
+     * @param force The force vector to be limited.
+     */
+    public void limitForce(Point2D.Float force){
+        float m = (float) Math.sqrt(force.x*force.x + force.y*force.y);
+        if(m >= maxForce){
+            force.x = (force.x*maxForce/m);
+            force.y =  (force.y*maxForce/m);
+        }
+
+    }
+    /**
+     * Ensures that a boid remains within the bounds of the simulation area, adjusting its position
+     * and velocity if it goes beyond the boundaries.
+     *
+     * @param pos   The position of the boid.
+     * @param vel   The velocity of the boid.
+     * @param width  Width of the simulation area.
+     * @param height Height of the simulation area.
+     */
     public void boundedPosition(Point2D.Float pos,Point2D.Float vel,int width,int height){
         if (pos.getX() < 0) {
 
@@ -285,6 +342,14 @@ public class Boid {
 
 
     }
+    /**
+     * Calculates the angle between two vectors. This is used to determine if another boid
+     * falls within the current boid's field of view.
+     *
+     * @param point1 The first vector.
+     * @param point2 The second vector.
+     * @return The angle between the two vectors in radians.
+     */
     public double angleBetween(Point2D.Float point1, Point2D.Float point2){
         double scalarProduct = point1.getX()*point2.getX() + point1.getY()*point2.getY();
         double point1Norm =Math.sqrt(Math.pow(point1.getX(),2)+Math.pow(point1.getY(),2));
@@ -292,22 +357,48 @@ public class Boid {
         return Math.acos(scalarProduct/(point1Norm*point2Norm));
 
     }
-    public boolean isNeighbor(int i ,int j) {
 
-        Point2D.Float p =new Point2D.Float(this.getPosition()[i].x - this.getPosition()[j].x, this.getPosition()[i].y - this.getPosition()[j].y);
+    /**
+     * Determines if another boid is considered a neighbor based on distance and field of view.
+     *
+     * @param j Index of the potential neighbor boid.
+     * @param i Index of the current boid.
+     * @return True if the boid is a neighbor, false otherwise.
+     */
+    public boolean isNeighbor(int j ,int i) {
+
+        Point2D.Float p =new Point2D.Float(this.getPosition()[j].x - this.getPosition()[i].x, this.getPosition()[j].y - this.getPosition()[i].y);
         double d = Math.sqrt(p.x*p.x+p.y*p.y);
-        if ( d < distNeighbor) { // Check distance
-           Point2D.Float toOther =new  Point2D.Float((float) (this.getPosition()[j].x-this.getPosition()[i].x), (float)(this.getPosition()[j].getY()-this.getPosition()[j].getY()));
-           double angle = angleBetween(this.getVelocity()[i], toOther);
-           return angle < Math.toRadians(this.fieldOfView);
+        if (d>0 &&  d < distNeighbor) { // Check distance
+            double angle = angleBetween(this.getVelocity()[i], p);
+            return angle < Math.toRadians(this.fieldOfView);
         }
         return false;
     }
+    /**
+     * Provides a string representation of the Boid object.
+     * This representation includes details about each boid's position and velocity.
 
+     * The string starts with a header "Boid:"
+     * Each boid's details are listed in a formatted manner.
+     *
+     * @return A string representation of the Boid object.
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Boid: ");
 
-    public boolean equals(Boid boid) {
-        return this.id == boid.getId();
+        for (int i = 0; i < this.position.length; i++) {
+            builder.append("\n  Boid ").append(i).append(": ")
+                    .append("Position=(").append(position[i].x).append(", ").append(position[i].y).append("), ")
+                    .append("Velocity=(").append(velocity[i].x).append(", ").append(velocity[i].y).append("), ");
+        }
+
+        return builder.toString();
     }
+
+
 
 
 

@@ -8,7 +8,7 @@ public class TestPreyPredatorSimulator {
     public static void main(String[] args){
         GUISimulator gui = new GUISimulator (500 , 500 , Color.BLACK ) ;
         Random random=new Random();
-        int numPreys= 20;
+        int numPreys= 30;
         int numPredators = 1;
         Point2D.Float[] positionPreys=new Point2D.Float[numPreys];
         Point2D.Float[] velocityPreys=new Point2D.Float[numPreys];
@@ -16,16 +16,16 @@ public class TestPreyPredatorSimulator {
         Point2D.Float[] velocityPredators=new Point2D.Float[numPredators];
 
         for(int i=0;i<numPreys;i++){
-            positionPreys[i] = new Point2D.Float(random.nextInt(300,500), random.nextInt(300,500));
-            velocityPreys[i] = new Point2D.Float(random.nextInt(15), random.nextInt(10));
+            positionPreys[i] = new Point2D.Float(random.nextFloat(300,500), random.nextFloat(300,500));
+            velocityPreys[i] = new Point2D.Float(random.nextFloat(15), random.nextFloat(10));
         }
 
         for(int i=0;i<numPredators;i++){
-            positionPredators[i] = new Point2D.Float(random.nextInt(0,300), random.nextInt(0,500));
-            velocityPredators[i] = new Point2D.Float(random.nextInt(15), random.nextInt(10));
+            positionPredators[i] = new Point2D.Float(random.nextFloat(0,300), random.nextFloat(0,500));
+            velocityPredators[i] = new Point2D.Float(random.nextFloat(10,15), random.nextFloat(10,15));
         }
-        Prey preys = new Prey(positionPreys,velocityPreys,15,10,120,1);
-        Predator predators= new Predator(positionPredators,velocityPredators,15,10,120,2);
+        Prey preys = new Prey(positionPreys,velocityPreys,15,3,120,1);
+        Predator predators= new Predator(positionPredators,velocityPredators,1000,5,120,1);
         PreyPredatorSimulator simul = new PreyPredatorSimulator(preys,predators,gui);
         gui.setSimulable(simul);
 

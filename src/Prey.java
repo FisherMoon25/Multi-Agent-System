@@ -1,76 +1,108 @@
 import java.awt.geom.Point2D;
-import java.util.List;
-import java.util.Random;
-
+/**
+ * The Prey class represents prey boids in a predator-prey simulation. It inherits basic boid behaviors
+ * such as cohesion, separation, and alignment from the Boid class and adds a behavior to avoid predators.
+ */
 public class Prey extends Boid {
-
-    public Prey(Point2D.Float[] position, Point2D.Float[] velocity, float vlimX, float vlimY, float fieldOfView,long step){
-        super( position, velocity,vlimX,vlimY, fieldOfView,step);
+    /**
+     * Constructs a Prey instance with specified parameters.
+     *
+     * @param position    The initial positions of the prey boids.
+     * @param velocity    The initial velocities of the prey boids.
+     * @param vlim        The maximum velocity limit for each prey boid.
+     * @param maxForce    The maximum force limit for each prey boid.
+     * @param fieldOfView The field of view angle for each prey boid.
+     * @param step        The simulation step size.
+     */
+    public Prey(Point2D.Float[] position, Point2D.Float[] velocity, float vlim, float maxForce, float fieldOfView,long step){
+        super( position, velocity,vlim,maxForce, fieldOfView,step,7);
     }
 
+    /**
+     * Performs an avoidance behavior for a single prey boid to evade predators.
+     *
+     * @param i         Index of the prey boid to apply avoidance behavior.
+     * @param predators The instance of the Predator class representing the predators in the simulation.
+     */
+    private void avoid(int i,Predator predators) {
+            int numPredators = predators.getPosition().length;
 
-
-    private void avoid(Predator predators){
-        int numBoids = this.getPosition().length;
-        int numPredators=predators.getPosition().length;
-        for (int i = 0 ;i<numBoids;i++){
             Point2D.Float c = new Point2D.Float(0, 0);
             int count = 0;
-            for (int j = 0 ;j<numPredators;j++) {
 
-                float distX=this.getPosition()[i].x - predators.getPosition()[j].x;
-                float distY=this.getPosition()[i].x - predators.getPosition()[j].x;
-                double distance =Math.sqrt(distX*distX+distY*distY);
-                if (distance>0 && distance<distSeparation+10) {
+            for (int j = 0; j < numPredators; j++) {
+                float distX = this.getPosition()[i].x - predators.getPosition()[j].x;
+                float distY = this.getPosition()[i].y - predators.getPosition()[j].y;
+                double distance = Math.sqrt(distX * distX + distY * distY);
 
-                    c.setLocation(c.x +distX, c.y +distY);
-                    float normC=(float)Math.sqrt(c.x*c.x+c.y*c.y);
-                    c.setLocation(c.x/(normC*distance),c.y/(normC*distance));
-
+                if (distance > 0 && distance < distSeparation + 20) {
+                    c.setLocation(c.x + distX / distance, c.y + distY / distance); // Normalize and accumulate
                     count++;
                 }
-
             }
 
-            if (count>0){
-                c.setLocation(c.x/count,c.y/count);
-                float normC=(float )Math.sqrt(c.x*c.x + c.y*c.y);
-                c.setLocation(c.x*vlimY/normC,c.y*vlimY/normC);
-                Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
-                float m = (float) Math.sqrt(acceleration.x*acceleration.x + acceleration.y*acceleration.y);
-                if(m > 3){
-                    acceleration.x = (int) (acceleration.x*3/m);
-                    acceleration.y = (int) (acceleration.y*3/m);
+            if (count > 0) {
+                float normC = (float) Math.sqrt(c.x * c.x + c.y * c.y);
+                if (normC > 0) {
+                    c.setLocation(c.x / normC, c.y / normC); // Normalize the result
                 }
 
+                Point2D.Float acceleration = new Point2D.Float(c.x - this.getVelocity()[i].x, c.y - this.getVelocity()[i].y);
+                //limitForce(acceleration);
 
                 this.acceleration[i].x += acceleration.x;
                 this.acceleration[i].y += acceleration.y;
             }
 
-        }
     }
 
-
+    /**
+     * Updates the state of each prey boid in the simulation by applying the behavior forces,
+     * updating the velocity and position, and ensuring the prey avoid predators.
+     *
+     * @param predators The instance of the Predator class representing the predators in the simulation.
+     * @param width     Width of the simulation area.
+     * @param height    Height of the simulation area.
+     */
     public void update(Predator predators,int width,int height){
-        this.cohesion();
-        this.separation();
-        this.alignement();
-        this.avoid(predators);
+
+
         int numBoids =this.getPosition().length;
         for(int i=0;i<numBoids;i++){
+            this.cohesion(i);
+            this.separation(i);
+            this.alignement(i);
+            this.avoid(i,predators);
             this.getVelocity()[i].x +=this.acceleration[i].x;
             this.getVelocity()[i].y +=this.acceleration[i].y;
+            limitVelocity(this.getVelocity()[i]);
             this.getPosition()[i].x+=this.getVelocity()[i].x;
             this.getPosition()[i].y+=this.getVelocity()[i].y;
             this.acceleration[i].setLocation(0,0);
             this.boundedPosition(getPosition()[i],getVelocity()[i],width,height);
         }
-
-
-
-
     }
+    /**
+     * Provides a string representation of the Prey object.
+     * This representation includes details about each prey boid's position and velocity.
+     *
+     * The string starts with a header "Prey Boid:"
+     * Each boid's details are listed in a formatted manner.
+     *
+     * @return A string representation of the Prey object.
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Prey Boid: \n");
 
+        for (int i = 0; i < this.position.length; i++) {
+            builder.append("  Prey ").append(i).append(": ")
+                    .append("Position=(").append(position[i].x).append(", ").append(position[i].y).append("), ")
+                    .append("Velocity=(").append(velocity[i].x).append(", ").append(velocity[i].y).append("), ");
 
+        }
+
+        return builder.toString();
+    }
 }

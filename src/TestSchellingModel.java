@@ -15,8 +15,7 @@ public class TestSchellingModel {
         // Initialize the Schelling simulation with a GUI and parameters.
         SchellingModelSimulator simulator = new SchellingModelSimulator(gui, rows, columns, numStates, K);
 
-        SchelingModel game = simulator.getGame();
-        // Add some initial families of different colors to the simulation.
+        SchellingModel game = simulator.getGame();
         gui.setSimulable(simulator);
 
 

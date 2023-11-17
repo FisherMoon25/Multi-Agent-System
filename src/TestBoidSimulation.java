@@ -17,7 +17,7 @@ public class TestBoidSimulation {
             velocityPreys[i] = new Point2D.Float(random.nextFloat(5), random.nextFloat(2));
         }
 
-        BoidSimulation simulator = new BoidSimulation(positionPreys,velocityPreys,gui, 7, 50);
+        BoidSimulation simulator = new BoidSimulation(positionPreys,velocityPreys,15,2,120,1,gui, 7);
         //simulator.getFlocks().addBoid(new Boid(new Point2D.Float(100, 110), new Point2D.Float(5, -3), 10));
         //simulator.getFlocks().addBoid(new Boid(new Point2D.Float(400, 100), new Point2D.Float(-2, 10), 10));
 
