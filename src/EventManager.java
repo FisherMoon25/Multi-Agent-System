@@ -6,7 +6,7 @@ import java.util.PriorityQueue;
  */
 public class EventManager {
         private long currentDate = 0;
-        private PriorityQueue<Event> events;
+        private final PriorityQueue<Event> events;
 
         /**
          * Constructs an EventManager with an empty queue of events.
@@ -40,7 +40,8 @@ public class EventManager {
         public void next() {
                 if (!events.isEmpty() && events.peek().getDate() <= currentDate) {
                         Event e = events.poll();
-                        e.execute();
+                    assert e != null;
+                    e.execute();
                 }
                 currentDate++;
         }

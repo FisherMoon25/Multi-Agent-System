@@ -1,16 +1,14 @@
-import static java.lang.Boolean.FALSE;
-
 /**
  * Abstract base class for different variations of Conway's Game of Life.
  * This class manages the game grid and provides basic functionalities such as initialization,
  * adding cells, and counting neighbors. Specific game logic is to be implemented in subclasses.
  */
-public abstract class AbstractGameOfLife {
+public abstract class AbstractGame {
 
     protected int rows;
     protected int columns;
     protected Cell[][] grid;
-    protected Cell[][] initial_grid;
+    protected Cell[][] initGrid;
 
     /**
      * Constructs an abstract Game of Life with the specified grid dimensions.
@@ -18,17 +16,17 @@ public abstract class AbstractGameOfLife {
      * @param rows    The number of rows in the game grid.
      * @param columns The number of columns in the game grid.
      */
-    public AbstractGameOfLife(int rows, int columns) {
+    public AbstractGame(int rows, int columns) {
         this.rows = rows;
         this.columns = columns;
         this.grid = new Cell[rows][columns];
-        this.initial_grid = new Cell[rows][columns];
+        this.initGrid = new Cell[rows][columns];
 
         // Initialize the grid with dead cells
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                grid[i][j] = new Cell(0);
-                initial_grid[i][j] = new Cell(0);
+                this.grid[i][j] = new Cell(0);
+                this.initGrid[i][j] = new Cell(0);
             }
         }
     }
@@ -52,7 +50,7 @@ public abstract class AbstractGameOfLife {
     public void addCell(int row, int column, int state) {
         if (row >= 0 && row < rows && column >= 0 && column < columns) {
             grid[row][column].setState(state);
-            initial_grid[row][column].setState(state);
+            initGrid[row][column].setState(state);
         }
     }
 
@@ -62,7 +60,7 @@ public abstract class AbstractGameOfLife {
     public void reInit() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                grid[i][j].setState(initial_grid[i][j].getState());
+                grid[i][j].setState(initGrid[i][j].getState());
             }
         }
     }
@@ -83,7 +81,7 @@ public abstract class AbstractGameOfLife {
                     int newRow = (row + i + this.rows) % this.rows;
                     int newColumn = (column + j + this.columns) % this.columns;
                     if (isRelevantNeighbor(row, column, newRow, newColumn)) {
-                        count += 1;
+                        count++;
                     }
                 }
             }

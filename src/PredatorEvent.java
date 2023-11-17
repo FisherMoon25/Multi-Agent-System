@@ -5,10 +5,10 @@ import gui.GUISimulator;
  * This event manages the update of predator behaviors based on the state of the prey.
  */
 public class PredatorEvent extends Event {
-    private Prey preys;
-    private Predator predators;
-    private GUISimulator gui;
-    private EventManager eventManager;
+    private final Prey preys;
+    private final Predator predators;
+    private final GUISimulator gui;
+    private final EventManager eventManager;
 
     /**
      * Constructs a PredatorEvent with the specified parameters.

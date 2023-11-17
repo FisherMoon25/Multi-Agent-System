@@ -14,13 +14,10 @@ import java.awt.geom.Point2D;
 public class BoidSimulation implements Simulable {
 
 
-    private Boid boids;
-    private GUISimulator gui;
-
-    private int diameter;
-    private EventManager eventManager;
-
-
+    private final Boid boids;
+    private final GUISimulator gui;
+    private final EventManager eventManager;
+    
     /**
      * Constructs a BoidSimulation with initial positions and velocities for the boids,
      * a GUI for visualization, and the diameter for each boid representation.
@@ -30,10 +27,11 @@ public class BoidSimulation implements Simulable {
      * @param gui      The GUISimulator for visualization.
      * @param diameter Diameter of each boid for visualization.
      */
-    public BoidSimulation(Point2D.Float[] position,Point2D.Float[] velocity,float vlim,float maxForce,float fieldOfView,int step, GUISimulator gui, int diameter,float cohesionCoeff,float alignmentCoeff,float seperationCoeff) {
-        this.boids = new Boid(position,velocity,vlim,maxForce,fieldOfView,step,diameter,cohesionCoeff,alignmentCoeff,seperationCoeff);
+    public BoidSimulation(Point2D.Float[] position, Point2D.Float[] velocity, float maxSpeed, float maxForce, float fieldOfView,
+                          int step, GUISimulator gui, int diameter, float cohesionCoeff, float alignmentCoeff, float seperationCoeff) {
+        this.boids = new Boid(position, velocity, maxSpeed, maxForce, fieldOfView,
+                step, diameter, cohesionCoeff, alignmentCoeff, seperationCoeff);
         this.gui = gui;
-        this.diameter = diameter;
         this.eventManager = new EventManager();
         this.draw();
     }
@@ -45,7 +43,7 @@ public class BoidSimulation implements Simulable {
     @Override
     public void next() {
         this.eventManager.next();
-        this.eventManager.addEvent(new BoidEvent(this.eventManager.getCurrentDate()+boids.getStep(),boids,gui,eventManager));
+        this.eventManager.addEvent(new BoidEvent(this.eventManager.getCurrentDate() + this.boids.getStep(), boids, gui, eventManager));
         this.gui.reset();
         this.draw();
     }
@@ -56,7 +54,7 @@ public class BoidSimulation implements Simulable {
     public void restart() {
         boids.reInit();
         this.eventManager.restart();
-        this.eventManager.addEvent(new BoidEvent(this.eventManager.getCurrentDate()+boids.getStep(),boids,gui,eventManager));
+        this.eventManager.addEvent(new BoidEvent(this.eventManager.getCurrentDate() + boids.getStep(), boids, gui, eventManager));
         this.draw();
 
     }
@@ -66,15 +64,12 @@ public class BoidSimulation implements Simulable {
      */
     public void draw() {
         gui.reset();
-        int numPreys= this.boids.getPosition().length;
-        for (int i = 0;i<numPreys;i++){
-            int x =(int)this.boids.getPosition()[i].x;
-            int y =(int)this.boids.getPosition()[i].y;
-            Triangle triangle=new Triangle(x,y,Color.GREEN,Color.BLUE,6,8,this.boids.getVelocity()[i]);
-
+        int numPreys= this.boids.getPositions().length;
+        for (int i = 0; i < numPreys; i++) {
+            int x = (int) this.boids.getPositions()[i].x;
+            int y = (int) this.boids.getPositions()[i].y;
+            Triangle triangle = new Triangle(x, y, Color.BLACK, Color.BLUE,6,8, this.boids.getVelocities()[i]);
             gui.addGraphicalElement(triangle);
         }
     }
-
-
 }

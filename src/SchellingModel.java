@@ -5,11 +5,11 @@ import java.util.*;
  * In this model, cells represent agents of different types (colors). Agents move to a new location
  * if the number of similar neighbors is below a certain threshold.
  */
-public class SchellingModel extends AbstractGameOfLife {
+public class SchellingModel extends AbstractGame{
 
-    private int threshold;
-    private int nbOfColors;
-    private Set<Cell> vacantHouses;
+    private final int threshold;
+    private final int nbOfColors;
+    private final Set<Cell> vacantHouses;
 
     /**
      * Constructs a SchellingModel with specified dimensions, number of colors, and threshold.
@@ -32,7 +32,7 @@ public class SchellingModel extends AbstractGameOfLife {
                 boolean vacant = random.nextDouble() < 0.1; // 10% chance of being vacant
                 int state = vacant ? 0 : random.nextInt(nbOfColors) + 1;
                 grid[i][j] = new Cell(state);
-                initial_grid[i][j] = new Cell(state);
+                initGrid[i][j] = new Cell(state);
                 if (vacant) {
                     vacantHouses.add(grid[i][j]);
                 }

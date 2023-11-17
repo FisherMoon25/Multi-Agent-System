@@ -1,5 +1,5 @@
-public class GameImmigration extends AbstractGameOfLife {
-    private int nbOfStates;
+public class GameImmigration extends AbstractGame {
+    private final int nbOfStates;
 
     /**
      * Constructs a GameImmigration with specified grid dimensions and number of states.
@@ -50,7 +50,6 @@ public class GameImmigration extends AbstractGameOfLife {
                 }
             }
         }
-
         grid = newGrid;
     }
 

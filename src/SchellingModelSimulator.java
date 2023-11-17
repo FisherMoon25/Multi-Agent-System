@@ -10,9 +10,8 @@ import java.awt.*;
  * simulation steps.
  */
 public class SchellingModelSimulator implements Simulable {
-    private SchellingModel game;
-    private GUISimulator gui;
-    private final int cellSize = 10;
+    private final SchellingModel game;
+    private final GUISimulator gui;
 
     /**
      * Constructs a SchellingModelSimulator with specified parameters.
@@ -75,7 +74,8 @@ public class SchellingModelSimulator implements Simulable {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 Color color = stateToColor(grid[i][j].getState(), game.getNbOfColors());
-                gui.addGraphicalElement(new Rectangle(j * cellSize, i * cellSize, color, color, cellSize));
+                int cellSize = 10;
+                gui.addGraphicalElement(new Rectangle(j * cellSize, i * cellSize, Color.DARK_GRAY, color, cellSize));
             }
         }
     }

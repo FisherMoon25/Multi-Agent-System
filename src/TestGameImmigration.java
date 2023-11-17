@@ -12,7 +12,7 @@ public class TestGameImmigration {
 
         // Add some random cells
         for (int i = 40; i < 50; i++) {
-            for (int j = 40; j < 50; j++) {
+            for (int j = 10; j < 70; j++) {
                 int randomState = (int) (Math.random() * 4);
                 simulator.getGame().addCell(i, j, randomState);
             }

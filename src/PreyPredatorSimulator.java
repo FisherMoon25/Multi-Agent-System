@@ -1,5 +1,5 @@
 import gui.GUISimulator;
-import gui.Oval;
+
 import gui.Simulable;
 import gui.Triangle;
 
@@ -11,10 +11,10 @@ import java.awt.*;
  * in a GUI using an event-driven approach.
  */
 public class PreyPredatorSimulator implements Simulable {
-    private Prey preys;
-    private Predator predators;
-    private GUISimulator gui;
-    private EventManager eventManager;
+    private final Prey preys;
+    private final Predator predators;
+    private final GUISimulator gui;
+    private final EventManager eventManager;
 
     /**
      * Constructs a PreyPredatorSimulator with the specified prey, predators, and GUI.
@@ -64,23 +64,23 @@ public class PreyPredatorSimulator implements Simulable {
      */
     private void draw() {
         // Draw prey
-        int numPreys = this.preys.getPosition().length;
+        int numPreys = this.preys.getPositions().length;
         for (int i = 0; i < numPreys; i++) {
-            int x = (int) this.preys.getPosition()[i].x;
-            int y = (int) this.preys.getPosition()[i].y;
+            int x = (int) this.preys.getPositions()[i].x;
+            int y = (int) this.preys.getPositions()[i].y;
 
-            Triangle triangle=new Triangle(x,y,Color.GREEN,Color.BLUE,6,8,this.preys.getVelocity()[i]);
+            Triangle triangle=new Triangle(x, y, Color.GREEN, Color.BLUE,6,8, this.preys.getVelocities()[i]);
 
             gui.addGraphicalElement(triangle);
         }
 
         // Draw predators
-        int numPredators = this.predators.getPosition().length;
+        int numPredators = this.predators.getPositions().length;
         for (int j = 0; j < numPredators; j++) {
-            int x = (int) this.predators.getPosition()[j].x;
-            int y = (int) this.predators.getPosition()[j].y;
+            int x = (int) this.predators.getPositions()[j].x;
+            int y = (int) this.predators.getPositions()[j].y;
 
-            Triangle triangle=new Triangle(x,y,Color.RED,Color.WHITE,10,15,this.predators.getVelocity()[j]);
+            Triangle triangle=new Triangle(x,y,Color.RED,Color.WHITE,10,15,this.predators.getVelocities()[j]);
             gui.addGraphicalElement(triangle);
 
         }

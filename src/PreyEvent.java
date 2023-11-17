@@ -6,10 +6,10 @@ import gui.GUISimulator;
  */
 public class PreyEvent extends Event {
 
-    private Prey preys;
-    private Predator predators;
-    private GUISimulator gui;
-    private EventManager eventManager;
+    private final Prey preys;
+    private final Predator predators;
+    private final GUISimulator gui;
+    private final EventManager eventManager;
 
     /**
      * Constructs a PreyEvent with the specified parameters.

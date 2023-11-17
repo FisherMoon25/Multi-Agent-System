@@ -10,9 +10,8 @@ import java.awt.*;
  * the simulation steps.
  */
 public class GameImmigrationSimulator implements Simulable {
-    private GameImmigration game;
-    private GUISimulator gui;
-    private final int cellSize = 10;
+    private final GameImmigration game;
+    private final GUISimulator gui;
 
     /**
      * Constructs a GameImmigrationSimulator with specified parameters.
@@ -73,7 +72,8 @@ public class GameImmigrationSimulator implements Simulable {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 Color color = stateToColor(grid[i][j].getState(), game.getNbOfStates());
-                gui.addGraphicalElement(new Rectangle(j * cellSize, i * cellSize, color, color, cellSize));
+                int cellSize = 10;
+                gui.addGraphicalElement(new Rectangle(j * cellSize, i * cellSize, Color.DARK_GRAY, color, cellSize));
             }
         }
     }

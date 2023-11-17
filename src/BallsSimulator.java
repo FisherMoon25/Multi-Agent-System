@@ -9,9 +9,9 @@ import java.awt.*;
  * It manages the events related to the balls' movement and their rendering in the GUI.
  */
 public class BallsSimulator implements Simulable {
-    private Balls balls;
+    private final Balls balls;
     private GUISimulator gui;
-    private EventManager eventManager;
+    private final EventManager eventManager;
 
     /**
      * Default constructor initializing the simulator without a GUI.

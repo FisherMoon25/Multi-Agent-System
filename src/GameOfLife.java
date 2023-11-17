@@ -6,7 +6,7 @@ import static java.lang.Boolean.*;
  * In this cellular automaton, cells can either be alive or dead, and their states
  * are updated based on the number of alive neighbors they have.
  */
-public class GameOfLife extends AbstractGameOfLife {
+public class GameOfLife extends AbstractGame {
 
     /**
      * Constructs a GameOfLife with specified grid dimensions.

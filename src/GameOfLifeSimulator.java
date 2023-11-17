@@ -10,8 +10,8 @@ import java.awt.*;
  * simulation steps and pattern initialization.
  */
 public class GameOfLifeSimulator implements Simulable {
-    private GameOfLife game;
-    private GUISimulator gui;
+    private final GameOfLife game;
+    private final GUISimulator gui;
 
 
     /**
@@ -57,13 +57,11 @@ public class GameOfLifeSimulator implements Simulable {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 if (grid[i][j].isAlive()) {
-                    gui.addGraphicalElement(new Rectangle(j * cellSize, i * cellSize, Color.BLUE, Color.BLUE, cellSize - 1));
+                    gui.addGraphicalElement(new Rectangle(j * cellSize, i * cellSize, Color.BLACK, Color.BLUE, cellSize ));
                 }
             }
         }
     }
-
-
 
     /**
      * Gets the current GameOfLife instance being simulated.

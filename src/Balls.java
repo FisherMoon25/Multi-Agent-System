@@ -7,9 +7,9 @@ import java.util.List;
  * Allows for the translation of these balls within a defined window.
  */
 public class Balls {
-    private ArrayList<Point> balls;
-    private ArrayList<Point> initialPositions;
-    private ArrayList<Point> directions;
+    private final ArrayList<Point> balls;
+    private final ArrayList<Point> initialPositions;
+    private final ArrayList<Point> directions;
 
     /**
      * Constructor for Balls class.
